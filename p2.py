@@ -7,15 +7,47 @@ import string
 
 app=Flask(__name__)
 
+#Define global parameters
+global lists
+global entities
+global tags
+
+lists = createLists("file.tsv")
+entities = lists[0]
+tags = lists[1]
+
+
+def createLists(file_name):
+  tag=[]
+  entity=[]
+
+  count = max(enumerate(open("file.tsv")))[0]
+  iterators = lineGenerator(file_name)
+  try:
+    for i in xrange(count):
+      trans = string.maketrans('\t\n', '\t ')
+      sep = string.translate(iterators.next(), trans)
+      sep = sep.split('\t')
+      tag.append(sep[0])
+      entity.append(sep[1])
+  except StopIteration:
+    pass
+
+  return [entity, tag]
+
+def lineGenerator(file_name):
+  for line in open(file_name):
+    yield line
+
+def getOutput(final):
+  print "\n\t*Rule based entity search in progress...\n"
+  return "\nRule based entity search in progress...\n\n" + "\n".join(str(i) for i in final) + "\n\n"
+
 @app.route("/", methods=["GET","POST"])
 def extract():
   global lists
   global entities
   global tags
-
-  lists = createLists("file.tsv")
-  entities = lists[0]
-  tags = lists[1]
 
 
   if request.method== "POST":
@@ -29,14 +61,13 @@ def extract():
       f = getInfo(word, entities, tags, sentence)
       if f!=None:
         final.append(f)
-        print str(f)
 
     if len(final)==0:
       return "No Entity found."
     else:
-      response = flask.make_response(getOutput(final))
-      reponse.headers["content-type"] = "text/plain"
-      return response#"Rule based entity search in progress...\n" + str(getOutput(final))
+#      response = flask.make_response(getOutput(final))
+#      reponse.headers["content-type"] = "text/plain"
+      return getOutput(final)#"Rule based entity search in progress...\n" + str(getOutput(final))
 
   else:
     return "Only POST requests are accepted. No text found. Try Again...\n"
@@ -60,28 +91,6 @@ def getInfo(word, entity, tag, sentence):
     if re.search(pattern, single_entity):
       info = {"Entity" : single_entity, "Position" : sentence.find(word), "Tag" : tag[x]}
       return info
-
-def createLists(file_name):
-  tag=[]
-  entity=[]
-
-  with open(file_name) as f:
-    lines = f.readlines()
-
-  for line in lines:
-    trans = string.maketrans('\t\n', '\t ')
-    sep = string.translate(line, trans)
-    sep = sep.split('\t')
-    tag.append(sep[0])
-    entity.append(sep[1])
-
-  return [entity, tag]
-
-def getOutput(final):
-  print "Rule based entity search in process...\n"
-  for i in final:
-    print i
-
 
 if __name__ == "__main__":
   app.debug=True
