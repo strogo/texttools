@@ -1,28 +1,19 @@
 from flask import request
 from flask import Flask
-import flask
-import ast
-import re
-import string
+import flask, ast, re, string
+from nltk.corpus import stopwords
 
-app=Flask(__name__)
 
-#Define global parameters
-global lists
-global entities
-global tags
-
-lists = createLists("file.tsv")
-entities = lists[0]
-tags = lists[1]
-
+global file_name, lists, entities, tags
+file_name  = "tags.tsv"
 
 def createLists(file_name):
   tag=[]
   entity=[]
 
-  count = max(enumerate(open("file.tsv")))[0]
+  count = max(enumerate(open(file_name)))[0]
   iterators = lineGenerator(file_name)
+
   try:
     for i in xrange(count):
       trans = string.maketrans('\t\n', '\t ')
@@ -39,6 +30,18 @@ def lineGenerator(file_name):
   for line in open(file_name):
     yield line
 
+def data():
+  #Define global parameters
+  global lists
+  global entities
+  global tags
+
+  lists = createLists(file_name)
+  entities = lists[0]
+  tags = lists[1]
+
+app=Flask(__name__)
+
 def getOutput(final):
   print "\n\t*Rule based entity search in progress...\n"
   return "\nRule based entity search in progress...\n\n" + "\n".join(str(i) for i in final) + "\n\n"
@@ -53,7 +56,8 @@ def extract():
   if request.method== "POST":
     sentence= getSentence()
     processed_sentence = stripSentence(sentence)
-    words = processed_sentence.split() # gives list of words in sentence
+    words_with_stopwords = processed_sentence.split() # gives list of words in sentence
+    words = removeStopwords(words_with_stopwords)
 
     final = []
 
@@ -84,15 +88,28 @@ def stripSentence(sentence):
   #Strip sentence of its punctuations and replace those with spaces
   return sentence.translate(trans)
 
+def removeStopwords(words_with_stopwords):
+  stop = stopwords.words('english')
+  words= []
+
+  for i in words_with_stopwords:
+    if i not in stop:
+      words.append(i)
+  return words
+
+
 def getInfo(word, entity, tag, sentence):
 #  pattern= r'\W*'+ word + r'\W*'
   pattern = '[^0-9A-Za-z]' + word + '[^0-9A-Za-z]'
   for x,single_entity in enumerate(entity):
     if re.search(pattern, single_entity):
+      print pattern + "\n" + word
       info = {"Entity" : single_entity, "Position" : sentence.find(word), "Tag" : tag[x]}
       return info
 
+
 if __name__ == "__main__":
+  data()
   app.debug=True
-  app.run(host='0.0.0.0')
+  app.run(host='0.0.0.0') #, use_reloader= False) # Without app.reloader it will run twice. and it will not debug
   # app.run(debug=True)
