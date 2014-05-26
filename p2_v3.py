@@ -62,24 +62,18 @@ def checkinDictionary(words,index, sentence):
     return [None, j+1]
 
   entity = ""
-  while len(W) != len(set(W) & set(uniqueTags)) and W != None:
-
-    if words[j+1] is in W:
+  while len(set(W) & set(uniqueTags)) != 0:
+    if words[j+1] in W:
       j, W = j+1, Mdict.getlist(words[j+1])
       entity = entity + words[j] + " "
 
-    elif set(W) in set(uniqueTags):
-      tags = set(W).intersection(set(uniqueTags))
-      for x,tag in enumerate(tags):
-        info[x] = {'Entity' : entity, 'Position': sentence.find(words[index]), 'Tag' = tag}
-      j, W = j+1, Mdict.getlist(words[j+1])
-
-    else:
-
+  tags = set(W).intersection(set(uniqueTags))
 
   info = []
-  for x,i in enumerate(W):
+  for x,tag in enumerate(tags):
+    info[x] = {'Entity' : entity, 'Position': sentence.find(words[index]), 'Tag' : tag}
 
+  return info
 
 
   # PSEUDOCODE:
