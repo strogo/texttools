@@ -9,7 +9,11 @@ file_name  = "tags.tsv"
 
 def main():
   global Mdict
-  Mdict = Dicts.createMultiDict(file_name)
+  global uniqueTags
+
+  f = Dicts.createMultiDict(file_name)
+  Mdict = f[0]
+  uniqueTags = f[1]
 
 app=Flask(__name__)
 
@@ -19,7 +23,6 @@ def getOutput(final):
 
 @app.route("/", methods=["GET","POST"])
 def extract():
-  global lists
   global Mdict
 
 
@@ -30,15 +33,11 @@ def extract():
     words = removeStopwords(words_with_stopwords)
 
     final = []
-    full_list = " ".join(entities)
 
-    for index in xrange(len(words)):
-      #  pattern= r'\W*'+ word + r'\W*'
-      pattern = '[^0-9A-Za-z]' + words[index] + '[^0-9A-Za-z]'
-      if re.search(pattern, full_list) !=None:
-        f = getInfo(words, index, entities, tags, sentence, pattern)
-        if f!=None:
-          final.append(f)
+    while index < len(words): # when index = length of list, it will break
+      l = checkinDictionary(words,index,sentence )
+
+
 
     if len(final)==0:
       return "No Entity found.\n"
@@ -50,6 +49,55 @@ def extract():
   else:
     return "Only POST requests are accepted. No text found. Try Again...\n"
 
+
+def checkinDictionary(words,index, sentence):
+  global Mdict
+  global uniqueTags
+  j = index
+
+
+  if words[j] in Mdict:
+    W = Mdict.getlist(words[j])
+  else:
+    return [None, j+1]
+
+  entity = ""
+  while len(W) != len(set(W) & set(uniqueTags)) and W != None:
+
+    if words[j+1] is in W:
+      j, W = j+1, Mdict.getlist(words[j+1])
+      entity = entity + words[j] + " "
+
+    elif set(W) in set(uniqueTags):
+      tags = set(W).intersection(set(uniqueTags))
+      for x,tag in enumerate(tags):
+        info[x] = {'Entity' : entity, 'Position': sentence.find(words[index]), 'Tag' = tag}
+      j, W = j+1, Mdict.getlist(words[j+1])
+
+    else:
+
+
+  info = []
+  for x,i in enumerate(W):
+
+
+
+  # PSEUDOCODE:
+  # j= index
+  #   while (len(W) != len(W in uniqueTags))
+  # if words[j+1] is in W : j++ and W = Mdict[words[j]] else check 2
+  #      store: entity = entity + " " + words[j]
+  # do above till there are only tags in W i.e.
+  # for x,i in enumerate(W):
+  #     make info as  a list i.e. info = []
+  # info[x] = {'Entity' : entity, 'Position': sentence.find(words[index]), 'Tag' = i}
+  # back trace the word: Sani --> Abacha Sani so need to backtrace it. Entity and tags are mixed in it
+  # return [info, j]
+
+
+
+
+  return [index, info]
 
 def getSentence():
   converted_list= request.form.copy().keys()[0]
