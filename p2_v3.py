@@ -36,7 +36,7 @@ def extract():
       l = checkinDictionary(words,index,sentence )
       index = l[1]
 
-      if l[0] != None and l[0]!= []:
+      if l[0] != None and l[0] != []:
         for a in l[0]:
           if a not in final:
             final.append(a)
@@ -65,7 +65,7 @@ def checkinDictionary(words,index, sentence):
   entity = ""
 
   while len(set(W) & set(uniqueTags)) != 0:
-    if words[j+1] in W:
+    if j < (len(words) -1) and words[j+1] in W:
       j, W = j+1, Mdict.getlist(words[j+1])
     else:
       break

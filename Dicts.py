@@ -4,7 +4,7 @@ import string
 from nltk.corpus import stopwords
 
 global file_name, Mdict
-file_name  = "file.tsv"
+file_name  = "tags.tsv"
 
 
 def lineGenerator(file_name):
@@ -16,8 +16,7 @@ def data():
   #Define global parameters
   global Mdict
   Mdict = createMultiDict(file_name)
-  print Mdict
-
+  print "done", Mdict
 def createMultiDict(file_name):
   Mdict = MD()
 
