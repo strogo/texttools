@@ -62,25 +62,33 @@ def checkinDictionary(words,index, sentence):
   else:
     return [None, j+1]
 
-  entity = words[j]
-
-#  while len(set(W) & set(uniqueTags)) != 0:
-  while W!=[]:
-    print words, index, W, j, "\n"
-    if j <= (len(words) -1):# and words[j+1] in W:
-      j, W = j+1, Mdict.getlist(words[j+1])
-
-    else:
-      break
-  # check for if W is not in the next words
-
-  entity = " ".join(words[index:j])
-  tags = list(set(W).intersection(set(uniqueTags)))
 
   info = []
-  for x,tag in enumerate(tags):
+
+  for i in W:
+    entity = words[j]
+    print i
+    entity = entity + " " + i
+    print "\n", entity
+    if entity in Mdict:
+      info.append({'Entity' : entity, 'Position': sentence.find(words[index]) + 1, 'Tag' : Mdict.getlist(entity)})
+      print info
+#  while len(set(W) & set(uniqueTags)) != 0:
+#  while W!=[]:
+#    print words, index, W, j, "\n"
+#    if j <= (len(words) -1):# and words[j+1] in W:
+#      j, W = j+1, Mdict.getlist(words[j+1])
+
+#    else:
+#      break
+  # check for if W is not in the next words
+
+#  entity = " ".join(words[index:j])
+#  tags = list(set(W).intersection(set(uniqueTags)))
+
+#  for x,tag in enumerate(tags):
 #    print {'Entity' : entity, 'Position': sentence.find(words[index]) + 1, 'Tag' : tag}
-    info.append({'Entity' : entity, 'Position': sentence.find(words[index]) + 1, 'Tag' : tag})
+#    info.append({'Entity' : entity, 'Position': sentence.find(words[index]) + 1, 'Tag' : tag})
 
   return [info, j+1]
 
