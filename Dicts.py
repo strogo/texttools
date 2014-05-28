@@ -16,7 +16,7 @@ def data():
   #Define global parameters
   global Mdict
   Mdict = createMultiDict(file_name)
-  print "done", Mdict
+and a not in final
 def createMultiDict(file_name):
   Mdict = MD()
 

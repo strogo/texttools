@@ -64,8 +64,9 @@ def checkinDictionary(words,index, sentence):
 
   entity = words[j]
 
-#  while len(set(W) & set(uniqueTags)) != 0:
-  while W!=[]:
+
+  while len(set(W) & set(uniqueTags)) != 0:
+#  while W!=[]:
     print words, index, W, j, "\n"
     if j <= (len(words) -1):# and words[j+1] in W:
       j, W = j+1, Mdict.getlist(words[j+1])

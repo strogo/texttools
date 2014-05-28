@@ -5,13 +5,13 @@ from nltk.corpus import stopwords
 import Dicts3 as D
 
 global file_name, Mdict
-file_name  = "tags.tsv"
+file_name  = "file.tsv"
 
 def main():
   global Mdict
   global uniqueTags
   Mdict, uniqueTags = D.createMultiDict(file_name)
-  print "Server ready..."
+  print "Server ready...", Mdict.getlist('Sani')
 
 app = Flask(__name__)
 
@@ -34,7 +34,7 @@ def extract():
       info, index = checkinDictionary(words,index,sentence)
       final = final + [a for a in info if a not in final]
 
-    return getOutput(final) # error
+    return getOutput(final)
   else:
     return "Only POST requests are accepted. No text found. Try Again...\n"
 
