@@ -11,53 +11,37 @@ def lineGenerator(file_name):
   for line in open(file_name):
     yield line
 
-
 def data():
   #Define global parameters
   global Mdict
-  Mdict = createMultiDict(file_name)
-  print Mdict[0]
+  Mdict  = createMultiDict(file_name)
 
 def createMultiDict(file_name):
-  Mdict = MD()
-
+  Mdict, uniqueTags = MD(), []
   count = max(enumerate(open(file_name)))[0]
-
   iterators = lineGenerator(file_name)
-  uniqueTags = []
 
   try:
     for i in xrange(count):
-      trans = string.maketrans('\n', '\t')
-      line = string.translate(iterators.next(), trans)
-      line=line.split('\t')
-      tag = line[0]
-
-      entity=line[1]
-      entity = stripSentence(entity) # remove punctuation
-      entity = entity.split(' ')
-      entity = removeStopwords(entity) # remove stopwords
-
-      # remove  " " from the list
-      for i in xrange(entity.count("")):
-        entity.remove("")
-      # remove ' ' from the list
-      for i in xrange(entity.count(" ")):
-        entity.remove(" ")
-
-      line = entity + [tag]
+      trans = string.maketrans('\n', '\t')# because there are \n characters on each line
+      line = string.translate(iterators.next(), trans).split('\t')
+      tag, entity = line[0], line[1]
 
       if tag not in uniqueTags:
-        uniqueTags.append(tag)
+        uniqueTags = uniqueTags +[tag]
+      entity = getWords(entity) # Extract words from sentence: Stopwords removed, punctuations removed
+      # remove  "" from the list
+      # remove ' ' from the list
 
-      for c in xrange(len(line)-1):
-        print [line[c+1:] + line[:c] + [line[c]]], line[c]
-        Mdict.setlistdefault(line[c]).extend([line[c+1:] + line[:c] + [line[c]]])
+      entity = [i for i in entity if entity!="" or entity!=" "]
+      line_words = entity + [tag] # Words in a single line of the file
+      for c in xrange(len(line_words)-1):
+        Mdict.setlistdefault(line_words[c]).extend([line_words[c+1:] + line_words[:c] + [line_words[c]]])
 
   except StopIteration:
     pass
 
-  return [Mdict, uniqueTags]
+  return Mdict, uniqueTags
 
 def stripSentence(sentence):
   #Create conversion table mapping punctuation and space to spaces
@@ -67,19 +51,18 @@ def stripSentence(sentence):
 
 def getStopwords():
   stops = stopwords.words('english')
-  stop2 =[]
-  for i in stops:
-    stop2.append(i[0].upper() + i[1:])
-  return stops + stop2
+  stops2 = [i[0].upper() + i[1:] for i in stops]
+  return stops + stops2
 
 def removeStopwords(words_with_stopwords):
   stop = getStopwords()
-  words= []
-
-  for i in words_with_stopwords:
-    if i not in stop:
-      words.append(i)
+  words = [i for i in words_with_stopwords if i not in stop]
   return words
+
+def getWords(sentence):
+  processed_sentence = stripSentence(sentence)
+  words_with_stopwords = processed_sentence.split() # gives list of words in sentence
+  return removeStopwords(words_with_stopwords)
 
 
 if __name__=="__main__" :
