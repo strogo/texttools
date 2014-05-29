@@ -27,11 +27,10 @@ def createMultiDict(file_name):
     for i in xrange(count):
       trans = string.maketrans('\n', '\t')# because there are \n characters on each line
       line = string.translate(iterators.next(), trans).split('\t')[:-1]
-      tag, entity = line[0], line[1]
+      tag, entity = line[0], getWords(line[1])
 
       if tag not in uniqueTags:
         uniqueTags = uniqueTags +[tag]
-      entity = getWords(entity) # Extract words from sentence: Stopwords removed, punctuations removed
 
       # remove ' ' and "" from the list
       line_words = entity + [tag] # Words in a single line of the file
