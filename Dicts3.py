@@ -6,6 +6,7 @@ from nltk.corpus import stopwords
 global file_name, Mdict
 file_name  = "file.tsv"
 
+# _____________________________________________________________________________________________________
 
 def lineGenerator(file_name):
   for line in open(file_name):
@@ -15,6 +16,7 @@ def data():
   #Define global parameters
   global Mdict
   Mdict  = createMultiDict(file_name)
+# _______________________________________Main Function______________________________________________________________
 
 def createMultiDict(file_name):
   Mdict, uniqueTags = MD(), []
@@ -30,9 +32,8 @@ def createMultiDict(file_name):
       if tag not in uniqueTags:
         uniqueTags = uniqueTags +[tag]
       entity = getWords(entity) # Extract words from sentence: Stopwords removed, punctuations removed
-      # remove  "" from the list
-      # remove ' ' from the list
 
+      # remove ' ' and "" from the list
       entity = [i for i in entity if entity!="" or entity!=" "]
       line_words = entity + [tag] # Words in a single line of the file
       for c in xrange(len(line_words)-1):
@@ -42,6 +43,8 @@ def createMultiDict(file_name):
     pass
 
   return Mdict, uniqueTags
+
+# _____________________________________________________________________________________________________
 
 def stripSentence(sentence):
   #Create conversion table mapping punctuation and space to spaces
@@ -63,6 +66,7 @@ def getWords(sentence):
   processed_sentence = stripSentence(sentence)
   words_with_stopwords = processed_sentence.split() # gives list of words in sentence
   return removeStopwords(words_with_stopwords)
+# _____________________________________________________________________________________________________
 
 
 if __name__=="__main__" :
