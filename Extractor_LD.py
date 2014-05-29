@@ -4,7 +4,7 @@ from nltk.corpus import stopwords
 import ast, string, json
 import Dicts3 as D
 
-# _____________________________________________________________________________________________________
+# _____________________________________________OBJECT________________________________________________________
 
 class entity_Extractor(object):
 
@@ -53,7 +53,7 @@ class entity_Extractor(object):
       c = an_option.index(tag)
       info = info + [{'Entity' : " ".join(an_option[c+1:] + an_option[:c]), 'Tag': tag, 'Position': position }]
     return info
-# _____________________________________________________________________________________________________
+# ____________________________________________FUNCTIONS_________________________________________________________
 def getSentence():
   converted_list= request.form.copy().keys()[0]
   converted_dict=ast.literal_eval(converted_list)
@@ -67,7 +67,7 @@ def getOutput(final):
   else:
     return json.dumps({'Result' : "Entities found",'Search Results' : final}, indent =4, sort_keys=False) + "\n"
 
-# _____________________________________________________________________________________________________
+# ______________________________________________APPLICATION_______________________________________________________
 
 app = Flask(__name__)
 @app.route('/', methods=['GET', 'POST'])
@@ -77,6 +77,8 @@ def process_request():
     return obj.extract(sentence)
   else:
     return "Only POST requests are accepted. No text found. Try Again...\n"
+
+# ___________________________________________________MAIN_______________________________________________________
 
 if __name__ == "__main__":
   file_name= "file.tsv"
