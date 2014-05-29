@@ -10,8 +10,10 @@ class entity_Extractor(object):
 
   def __init__(self, file_name):
     self.file_name = file_name
+    print "Setting up server..."
     self.Mdict, self.uniqueTags = Dict.createMultiDict(file_name)
     # Mdict is the dictionary with keys as each word in the file_name and values as words appearing in the line.
+    print "Server ready..."
 
   def extract(self, sentence):
     words = Dict.getWords(sentence)# Extract words from sentence: Stopwords removed, punctuations removed
@@ -33,7 +35,7 @@ class entity_Extractor(object):
       return [], j+1
 
     if j == (len(words)-1):
-      return [self.formatInput(an_option, position) for an_option in current_options], j+1
+      return self.getInfo(current_options, position), j+1
     else:
       flatten_listOfoptions = [word for i in current_options for word in i]
       while words[j+1] in flatten_listOfoptions:
@@ -81,7 +83,7 @@ def process_request():
 # ___________________________________________________MAIN_______________________________________________________
 
 if __name__ == "__main__":
-  file_name= "file.tsv"
+  file_name= "tags.tsv"
   obj = entity_Extractor(file_name)
   app.debug=True
   app.run(host='0.0.0.0') #, use_reloader= False) # Without app.reloader it will run twice. and it will not debug
