@@ -27,7 +27,7 @@ def createMultiDict(file_name):
     for i in xrange(count):
       trans = string.maketrans('\n', '\t')# because there are \n characters on each line
       line = string.translate(iterators.next(), trans).split('\t')[:-1]
-      line_words = getWords(line[1])
+      line_words = list(set(getWords(line[1])).union(super_dict[line[1]]))
       if line[0] not in uniqueTags:
         uniqueTags = uniqueTags +[line[0]]
       for c in xrange(len(line_words)):
